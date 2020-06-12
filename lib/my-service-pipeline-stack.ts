@@ -1,0 +1,48 @@
+import * as codepipeline from '@aws-cdk/aws-codepipeline';
+import * as codepipeline_actions from '@aws-cdk/aws-codepipeline-actions';
+import { Construct, SecretValue, Stack, StackProps } from '@aws-cdk/core';
+import { AppDeliveryPipeline, CdkBuilds } from './app-delivery';
+import * as secrets from '@aws-cdk/aws-secretsmanager';
+
+/**
+ * Stack configuration properties.
+ */
+export interface MyServicePipelineStackProps extends StackProps {
+    readonly gitHubTokenSecretArn: string;
+    readonly gitHubOwner: string;
+    readonly gitHubRepo: string;
+}
+
+/**
+ * The stack that defines the application pipeline
+ */
+export class MyServicePipelineStack extends Stack {
+  constructor(scope: Construct, id: string, props: MyServicePipelineStackProps) {
+    super(scope, id, props);
+    
+    const secret = secrets.Secret.fromSecretAttributes(this, 'GitHubSecret', {
+        secretArn: props.gitHubTokenSecretArn,
+    });
+
+    const pipeline = new AppDeliveryPipeline(this, 'Pipeline', {
+      // The pipeline name
+      pipelineName: 'MyServicePipeline',
+
+      // Where the source can be found
+      source: new codepipeline_actions.GitHubSourceAction({
+        actionName: 'GitHub',
+        output: new codepipeline.Artifact(),
+        oauthToken: secret.secretValue,
+        owner: props.gitHubOwner,
+        repo: props.gitHubRepo,
+        trigger: codepipeline_actions.GitHubTrigger.POLL,
+      }),
+
+      // How it will be built
+      build: CdkBuilds.standardNpmBuild(),
+    });
+
+    // This is where we add the application stages
+    // ...
+  }
+}
