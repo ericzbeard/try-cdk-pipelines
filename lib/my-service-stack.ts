@@ -14,7 +14,7 @@ export class MyServiceStack extends Stack {
     const handler = new lambda.Function(this, 'Lambda', {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: 'handler.handler',
-      code: lambda.Code.fromAsset(path.resolve(__dirname, 'build/lambda')),
+      code: lambda.Code.fromAsset('./build/lambda'),
     });
 
     // An API Gateway to make the Lambda web-accessible
