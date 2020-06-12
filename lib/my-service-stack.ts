@@ -18,7 +18,7 @@ export class MyServiceStack extends Stack {
     });
 
     // An API Gateway to make the Lambda web-accessible
-    const gw = new apigw.LambdaRestApi(this, 'Gateway', {
+    const gw = new apigw.LambdaRestApi(this, `${id}-Gateway`, {
       description: 'Endpoint for a simple Lambda-powered web service',
       handler,
     });
