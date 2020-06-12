@@ -12,6 +12,7 @@ export interface MyServicePipelineStackProps extends StackProps {
     readonly gitHubTokenSecretArn: string;
     readonly gitHubOwner: string;
     readonly gitHubRepo: string;
+    readonly prodAccount: string;
 }
 
 /**
@@ -48,5 +49,8 @@ export class MyServicePipelineStack extends Stack {
       env: { account: props.env!.account, region: props.env!.region}
     }));
 
+   pipeline.addApplicationStage(new MyServiceStage(this, 'Prod', {
+        env: { account: props.prodAccount, region: props.env!.region }
+   }));
   }
 }

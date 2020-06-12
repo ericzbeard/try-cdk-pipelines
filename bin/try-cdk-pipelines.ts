@@ -15,7 +15,8 @@ new MyServicePipelineStack(app, 'MyServicePipeline', {
   },
   gitHubTokenSecretArn: 'arn:aws:secretsmanager:us-east-1:509771036685:secret:github-token-2Yz69k',
   gitHubOwner: 'ericzbeard',
-  gitHubRepo: 'try-cdk-pipelines'
+  gitHubRepo: 'try-cdk-pipelines', 
+  prodAccount: '278978401551'
 });
 
 app.synth();
