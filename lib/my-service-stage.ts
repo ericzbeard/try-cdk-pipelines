@@ -9,6 +9,6 @@ export class MyServiceStage extends Stage {
   constructor(scope: Construct, id: string, props?: StageProps) {
     super(scope, id, props);
 
-    new MyServiceStack(this, `${id}-WebService`, {});
+    new MyServiceStack(this, id, {});
   }
 }
