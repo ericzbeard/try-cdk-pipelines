@@ -1,6 +1,6 @@
-import { Construct, Stage, Environment } from '@aws-cdk/core';
-import { MyServiceStack } from './my-service-stack';
-import { StageProps } from '@aws-cdk/core';
+import { Construct, Stage, Environment } from "@aws-cdk/core";
+import { MyServiceStack } from "./my-service-stack";
+import { StageProps } from "@aws-cdk/core";
 
 /**
  * Deployable unit of web service app
