@@ -1,7 +1,7 @@
 import * as codepipeline from "@aws-cdk/aws-codepipeline";
 import * as codepipelineActions from "@aws-cdk/aws-codepipeline-actions";
 import { Construct, SecretValue, Stack, StackProps } from "@aws-cdk/core";
-import { AppDeliveryPipeline, CdkBuilds } from "./app-delivery";
+import { AppDeliveryPipeline, CdkBuilds, Validation } from "./app-delivery";
 import * as secrets from "@aws-cdk/aws-secretsmanager";
 import { MyServiceStage } from "./my-service-stage";
 
@@ -49,10 +49,27 @@ export class MyServicePipelineStack extends Stack {
     });
 
     // This is where we add the application stages
-    pipeline.addApplicationStage(
-      new MyServiceStage(this, "PreProd", {
-        env: { account: props.env!.account, region: props.env!.region },
-      })
+    const preprod = new MyServiceStage(this, "PreProd", {
+      env: { account: props.env!.account, region: props.env!.region },
+    });
+
+    pipeline.addApplicationStage(preprod, {
+
+      validations: [
+        Validation.shellScript({
+          name: 'TestService',
+          useOutputs: {
+            // Get the stack Output from the Stage and make it available in
+            // the shell script as $ENDPOINT_URL.
+            ENDPOINT_URL: pipeline.stackOutput(preprod.urlOutput),
+          },
+          commands: [
+            // Use 'curl' to GET the given URL and fail it it returns an error
+            'curl -Ssf $ENDPOINT_URL',
+          ],
+        })
+      ]
+    }
     );
 
     pipeline.addApplicationStage(
